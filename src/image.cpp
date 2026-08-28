@@ -23,7 +23,7 @@ namespace sgm {
 bool loadImageFromMemory(const void* data, int size, Image& out, std::string* err) {
     if (!data || size <= 0) {
         if (err) {
-            *err = "Пустые данные изображения";
+            *err = "Empty image data";
         }
         return false;
     }
@@ -35,7 +35,7 @@ bool loadImageFromMemory(const void* data, int size, Image& out, std::string* er
         static_cast<const stbi_uc*>(data), size, &w, &h, &channels, 4);
     if (!pixels) {
         if (err) {
-            *err = stbi_failure_reason() ? stbi_failure_reason() : "Не удалось разобрать изображение";
+            *err = stbi_failure_reason() ? stbi_failure_reason() : "Failed to decode image";
         }
         return false;
     }
@@ -50,7 +50,7 @@ bool loadImageFromFile(const std::wstring& path, Image& out, std::string* err) {
     FILE* f = nullptr;
     if (_wfopen_s(&f, path.c_str(), L"rb") != 0 || !f) {
         if (err) {
-            *err = "Не удалось открыть файл";
+            *err = "Failed to open file";
         }
         return false;
     }
@@ -65,14 +65,14 @@ bool loadImageFromFile(const std::wstring& path, Image& out, std::string* err) {
     std::unique_ptr<FILE, FileCloser> closer(f);
     if (std::fseek(f, 0, SEEK_END) != 0) {
         if (err) {
-            *err = "Не удалось прочитать файл";
+            *err = "Failed to read file";
         }
         return false;
     }
     const long sz = std::ftell(f);
     if (sz <= 0) {
         if (err) {
-            *err = "Файл пустой";
+            *err = "File is empty";
         }
         return false;
     }
@@ -82,7 +82,7 @@ bool loadImageFromFile(const std::wstring& path, Image& out, std::string* err) {
     const std::size_t read = std::fread(buf.data(), 1, buf.size(), f);
     if (read != buf.size()) {
         if (err) {
-            *err = "Не удалось прочитать файл";
+            *err = "Failed to read file";
         }
         return false;
     }
@@ -94,7 +94,7 @@ bool encodePng(const Image& img, std::vector<std::uint8_t>& outPng, std::string*
     outPng.clear();
     if (img.empty()) {
         if (err) {
-            *err = "Нет изображения для сохранения";
+            *err = "No image to save";
         }
         return false;
     }
@@ -103,7 +103,7 @@ bool encodePng(const Image& img, std::vector<std::uint8_t>& outPng, std::string*
         pngWriteFn, &outPng, img.width, img.height, 4, img.rgba.data(), img.width * 4);
     if (!ok || outPng.empty()) {
         if (err) {
-            *err = "Не удалось закодировать PNG";
+            *err = "Failed to encode PNG";
         }
         return false;
     }
@@ -119,7 +119,7 @@ bool savePngToFile(const std::wstring& path, const Image& img, std::string* err)
     FILE* f = nullptr;
     if (_wfopen_s(&f, path.c_str(), L"wb") != 0 || !f) {
         if (err) {
-            *err = "Не удалось создать файл";
+            *err = "Failed to create file";
         }
         return false;
     }
@@ -127,7 +127,7 @@ bool savePngToFile(const std::wstring& path, const Image& img, std::string* err)
     std::fclose(f);
     if (written != png.size()) {
         if (err) {
-            *err = "Не удалось записать PNG";
+            *err = "Failed to write PNG";
         }
         return false;
     }
@@ -166,4 +166,4 @@ Image downscaleToFit(const Image& src, int maxSide) {
     return dst;
 }
 
-} // namespace sgm
+}

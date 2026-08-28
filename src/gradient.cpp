@@ -168,11 +168,11 @@ std::vector<Preset> builtinPresets() {
 
     return {
         {"Sunset", sunset},
-        {"Чёрно-белый", bw},
-        {"Сепия", sepia},
+        {"Black / White", bw},
+        {"Sepia", sepia},
         {"Teal / Orange", tealOrange},
-        {"Лёд", ice},
-        {"Кровь", blood},
+        {"Ice", ice},
+        {"Blood", blood},
     };
 }
 

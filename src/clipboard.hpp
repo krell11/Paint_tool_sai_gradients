@@ -15,4 +15,4 @@ bool clipboardHasImage();
 bool getClipboardImage(HWND hwnd, Image& out, std::string* err = nullptr);
 bool setClipboardImage(HWND hwnd, const Image& img, std::string* err = nullptr);
 
-} // namespace sgm
+}
