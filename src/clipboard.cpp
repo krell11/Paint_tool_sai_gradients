@@ -32,7 +32,7 @@ void treatZeroAlphaAsOpaque(Image& img) {
 bool decodeDib(const void* data, std::size_t size, Image& out, std::string* err) {
     if (!data || size < sizeof(BITMAPINFOHEADER)) {
         if (err) {
-            *err = "DIB слишком короткий";
+            *err = "DIB is too short";
         }
         return false;
     }
@@ -42,7 +42,7 @@ bool decodeDib(const void* data, std::size_t size, Image& out, std::string* err)
     if (headerSize < static_cast<int>(sizeof(BITMAPINFOHEADER)) ||
         size < static_cast<std::size_t>(headerSize)) {
         if (err) {
-            *err = "Повреждённый DIB-заголовок";
+            *err = "Corrupt DIB header";
         }
         return false;
     }
@@ -55,28 +55,27 @@ bool decodeDib(const void* data, std::size_t size, Image& out, std::string* err)
 
     if (width <= 0 || heightAbs <= 0) {
         if (err) {
-            *err = "Некорректный размер DIB";
+            *err = "Invalid DIB size";
         }
         return false;
     }
     if (bpp != 24 && bpp != 32) {
         if (err) {
-            *err = "Поддерживаются только 24/32-bit DIB";
+            *err = "Only 24/32-bit DIB is supported";
         }
         return false;
     }
     if (compression != BI_RGB && compression != BI_BITFIELDS) {
         if (err) {
-            *err = "Неподдерживаемое сжатие DIB";
+            *err = "Unsupported DIB compression";
         }
         return false;
     }
 
     std::size_t pixelOffset = static_cast<std::size_t>(headerSize);
     if (compression == BI_BITFIELDS) {
-        pixelOffset += 12; // RGB masks
+        pixelOffset += 12;
         if (headerSize >= static_cast<int>(sizeof(BITMAPV5HEADER))) {
-            // masks already inside BITMAPV5HEADER
             pixelOffset = static_cast<std::size_t>(headerSize);
         }
     }
@@ -86,7 +85,7 @@ bool decodeDib(const void* data, std::size_t size, Image& out, std::string* err)
 
     if (size < pixelOffset) {
         if (err) {
-            *err = "DIB без пикселей";
+            *err = "DIB has no pixels";
         }
         return false;
     }
@@ -97,7 +96,7 @@ bool decodeDib(const void* data, std::size_t size, Image& out, std::string* err)
     const std::size_t needed = pixelOffset + static_cast<std::size_t>(srcStride) * heightAbs;
     if (size < needed) {
         if (err) {
-            *err = "Обрезанные пиксели DIB";
+            *err = "Truncated DIB pixels";
         }
         return false;
     }
@@ -146,7 +145,7 @@ HGLOBAL makeDibHandle(const Image& img) {
     std::memset(hdr, 0, sizeof(*hdr));
     hdr->biSize = sizeof(BITMAPINFOHEADER);
     hdr->biWidth = width;
-    hdr->biHeight = height; // bottom-up
+    hdr->biHeight = height;
     hdr->biPlanes = 1;
     hdr->biBitCount = 32;
     hdr->biCompression = BI_RGB;
@@ -204,7 +203,7 @@ private:
     bool ok_;
 };
 
-} // namespace
+}
 
 bool clipboardHasImage() {
     const UINT png = pngClipboardFormat();
@@ -218,7 +217,7 @@ bool getClipboardImage(HWND hwnd, Image& out, std::string* err) {
     ClipboardGuard clip(hwnd);
     if (!clip.ok()) {
         if (err) {
-            *err = "Не удалось открыть буфер обмена";
+            *err = "Failed to open the clipboard";
         }
         return false;
     }
@@ -257,7 +256,7 @@ bool getClipboardImage(HWND hwnd, Image& out, std::string* err) {
     }
 
     if (err) {
-        *err = "В буфере нет картинки. В SAI: слой → Ctrl+C";
+        *err = "Clipboard has no image. In SAI: layer → Ctrl+C";
     }
     return false;
 }
@@ -265,7 +264,7 @@ bool getClipboardImage(HWND hwnd, Image& out, std::string* err) {
 bool setClipboardImage(HWND hwnd, const Image& img, std::string* err) {
     if (img.empty()) {
         if (err) {
-            *err = "Нет результата для копирования";
+            *err = "No result to copy";
         }
         return false;
     }
@@ -277,7 +276,7 @@ bool setClipboardImage(HWND hwnd, const Image& img, std::string* err) {
             GlobalFree(png);
         }
         if (err) {
-            *err = "Не удалось собрать DIB для буфера";
+            *err = "Failed to build clipboard DIB";
         }
         return false;
     }
@@ -289,7 +288,7 @@ bool setClipboardImage(HWND hwnd, const Image& img, std::string* err) {
             GlobalFree(png);
         }
         if (err) {
-            *err = "Не удалось открыть буфер обмена";
+            *err = "Failed to open the clipboard";
         }
         return false;
     }
@@ -302,4 +301,4 @@ bool setClipboardImage(HWND hwnd, const Image& img, std::string* err) {
     return true;
 }
 
-} // namespace sgm
+}

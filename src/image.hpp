@@ -30,4 +30,4 @@ bool savePngToFile(const std::wstring& path, const Image& img, std::string* err 
 bool encodePng(const Image& img, std::vector<std::uint8_t>& outPng, std::string* err = nullptr);
 Image downscaleToFit(const Image& src, int maxSide);
 
-} // namespace sgm
+}
