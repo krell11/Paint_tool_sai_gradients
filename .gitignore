@@ -1,0 +1,12 @@
+/build/
+/out/
+/.vs/
+/CMakeSettings.json
+/CMakeUserPresets.json
+imgui.ini
+*.user
+*.suo
+*.sdf
+*.opensdf
+*.vcxproj.user
+/cmake-build-*/
